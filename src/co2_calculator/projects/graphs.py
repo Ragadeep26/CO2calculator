@@ -1,6 +1,6 @@
 import pandas as pd
 import altair as alt
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
 from src.co2_calculator.structures.wall_MIP_EPD import MIPWall_EPD
 from matplotlib import cm
 import numpy as np
