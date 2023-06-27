@@ -7,6 +7,7 @@ from src.main_co2_calculator_EPD import main_CO2_calculator_EPD
 st.set_page_config(page_title='Piles & panels', layout="wide", page_icon="⚙️")
 
 
+
 if __name__ == '__main__':
     # Sidebar
     st.sidebar.markdown('# Form selection')
