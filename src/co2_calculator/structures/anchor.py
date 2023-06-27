@@ -130,7 +130,7 @@ class Anchor(object):
             v_unknown1 =            0.0
             v_unknown2 =            0.0
             v_unknown3 =            0.0
-            if column is not 'C':
+            if column != 'C':
                 v_unknown1 =        float(df.iloc[130])
                 v_unknown2 =        float(df.iloc[135])
                 v_unknown3 =        float(df.iloc[136])
