@@ -240,7 +240,8 @@ def continue_program(st, parameters):
 
                     elif isinstance(structure, MIPWall):
                         if st.checkbox('with steel structures'):
-                            structure = parameters['MIP wall with steel profiles'][0].structures
+                            add_structures_to_projects('MIP wall with steel profiles', project_names_to_be_assigned, parameters['projects'])
+                            structure = parameters['projects'][-1].structures
                             tab.header('Details for MIP wall with steel profiles')
                             cols = tab.columns(3)
                             structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
@@ -267,6 +268,7 @@ def continue_program(st, parameters):
                             col1.write('Persons transport [tCO2_eq]: {0:.1f}'.format(structure.out_persons_transport))
                             axis = create_tCO2eq_piechart_matplotlib(structure)
                             col2.pyplot(axis.figure, use_container_width=False)
+                            #remove_structures_from_projects(project_names_to_be_assigned, parameters['projects'])
                         else:
                             tab.header('Details for MIP as cut-off wall')
                             cols = tab.columns(3)
