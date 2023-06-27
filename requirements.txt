@@ -1,5 +1,5 @@
 streamlit==1.14.0
-matplotlib
+matplotlib==3.5.3
 scipy
 numpy
 openpyxl
