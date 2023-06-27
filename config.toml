@@ -24,9 +24,12 @@ enableCORS = true
 enableXsrfProtection = false
 
 [theme]
-base = "dark"
+primaryColor = "#E694FF"
+backgroundColor = "#00172B"
+secondaryBackgroundColor = "#0083B8"
+textColor = "#DCDCDC"
+font = "sans-serif"
 
 [browser]
-serverAddress = "https://co2calculator-8w81bpger0r.streamlit.app"
 gatherUsageStats = false
 serverPort = 80
