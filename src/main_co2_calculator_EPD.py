@@ -109,7 +109,7 @@ def continue_program(st, parameters):
     # structure(s) adding to a selected project
     col1, col2, col3 = st.columns(3)
     project_names_current = [project.project_variant for project in parameters['projects']]
-    foundation_structures = ('Anchor', 'MIP wall', 'MIP wall EPD', 'MIP wall with steel profiles', 'MIP wall with steel profiles EPD', 'Pile/ Pile wall', 'Diaphragm wall')
+    foundation_structures = ('Anchor', 'MIP wall', 'MIP wall EPD', 'Pile/ Pile wall', 'Diaphragm wall')
     project_names_to_be_assigned = col1.multiselect('Select a construction variant to assign structure(s) to', project_names_current)
     structures_to_assign = col2.multiselect('Select structure(s) to assign', foundation_structures)
     button_add_structures_to_projects =  col3.button('Add structures {0} to construction variant {1}'.format(structures_to_assign, project_names_to_be_assigned), key='add_structure')
@@ -239,103 +239,161 @@ def continue_program(st, parameters):
                         col2.pyplot(axis.figure, use_container_width=False)
 
                     elif isinstance(structure, MIPWall):
-                        tab.header('Details for MIP as cut-off wall')
-                        cols = tab.columns(3)
-                        structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPwall'+str(i))
-                        structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPwall'+str(i))
-                        structure.productivity = cols[2].number_input('Production rate (productivity) [m^2/working day]', value=structure.productivity, step=10.0, help='Basic value (without obstruction): 250 m^2/working day', key='productivity_MIPwall'+str(i))
-                        structure.cement = cols[0].number_input('Cement consumption [kg/m^3]', value=structure.cement, step=1.0, help='Basic setting: CEM III/B (not variable). Distance to concrete supplier: 20 km (not variable)', key='cement_MIPwall'+str(i))
-                        structure.betonite = cols[1].number_input('Betonite consumption [kg/m^3]', value=structure.betonite, step=1.0, help='Distance of betonite dilivery: 20 Km (not variable)', key='betonite_MIPwall'+str(i))
-                        #structure.support_fluid = cols[1].number_input('Betonite [kg/m^3]', value=structure.support_fluid, step=10.0, help='Distance to betonite supplier: 20 km (not variable)', key='support_fluid_MIPwall'+str(i))
-                        structure.diesel = cols[2].number_input('Diesel consumption [liter/working day]', value=structure.diesel, step=10.0, help='Basic value 750 liter/working day and 850 liter/working day respectively for ... Distance to diesel supplier: 10 km (not variable)', key='diesel_MIPwall'+str(i))
-                        structure.electricity = cols[0].number_input('Electricity consumption [kWh/h]', value=structure.electricity, step=1.0, help='Basic value 80 kWh/h', key='electricity_MIPwall'+str(i))
-                        structure.distance_mob_demob = cols[1].number_input('Mob./ demob. distance [km]', value=structure.distance_mob_demob, step=10.0, help='One-way distance of transport for heavy machines', key='distance_mob_demob_MIPwall'+str(i))
-                        structure.excess = cols[2].number_input('Excess bore [%]', value=structure.excess, step=5.0, help="Basic value: 25% for gravelly soil, 35% for sandy soil, 45% for cohesive soil. Distance to waste disposal: 20 km (not variable)", key='excess_MIPwall'+str(i))
-                        # calc tCO2_eq
-                        sum_tco2_eq = structure.calc_co2eq()
-                        tab.markdown('### Results $tCO2eq$ for MIP wall as cut-off wall: {0:.1f}'.format(sum_tco2_eq))
-                        col1, col2, col3 = tab.columns([4, 4, 2])
-                        col1.write('Material production [tCO2_eq]: {0:.1f}'.format(structure.out_material_production))
-                        col1.write('Material transport [tCO2_eq]: {0:.1f}'.format(structure.out_material_transport))
-                        col1.write('Disposal transport [tCO2_eq]: {0:.1f}'.format(structure.out_disposal_transport))
-                        col1.write('Equipment [tCO2_eq]: {0:.1f}'.format(structure.out_equipment))
-                        col1.write('Energy/ electricity/ hour [tCO2_eq]: {0:.1f}'.format(structure.out_energy_electricity_hour))
-                        col1.write('Mobilization/ demobilization [tCO2_eq]: {0:.1f}'.format(structure.out_mob_demob))
-                        col1.write('Persons transport [tCO2_eq]: {0:.1f}'.format(structure.out_persons_transport))
-                        axis = create_tCO2eq_piechart_matplotlib(structure)
-                        col2.pyplot(axis.figure, use_container_width=False)
+                        if st.checkbox('With  Steel structures'):
+                            Steelstructure = 1
+                            cols = tab.columns(3)
+                            structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
+                            structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPSteelwall'+str(i))
+                            structure.productivity = cols[2].number_input('Production rate (productivity) [m^2/working day]', value=structure.productivity, step=10.0, help='Basic value (without obstruction): 170 m^2/working day', key='productivity_MIPSteelwall'+str(i))
+                            structure.cement = cols[0].number_input('Cement consumption [kg/m^3]', value=structure.cement, step=1.0, help='Basic setting: CEM III/B (not variable). Distance to concrete supplier: 20 km (not variable)', key='cement_MIPSteelwall'+str(i))
+                            structure.betonite = cols[1].number_input('Betonite consumption [kg/m^3]', value=structure.betonite, step=1.0, help='Distance of betonite dilivery: 20 Km (not variable)', key='betonite_MIPSteelwall'+str(i))
+                            structure.weight_steelprofile = cols[2].number_input('Weight of steel beams [ton]', value=structure.weight_steelprofile, step=1.0, help='According to input field in EFFC Carbon Calculator. Distance to steel supplier: 300 km (not variable)', key='weight_steelprofile_MIPSteelwall'+str(i))
+                            #structure.support_fluid = cols[0].number_input('Betonite [kg/m^3]', value=structure.support_fluid, step=10.0, help='Distance to betonite supplier: 20 km (not variable)', key='support_fluid_MISteelPwall'+str(i))
+                            structure.diesel = cols[0].number_input('Diesel consumption [liter/working day]', value=structure.diesel, step=10.0, help='Basic value 750 liter/working day and 850 liter/working day respectively for ... Distance to diesel supplier: 10 km (not variable)', key='diesel_MIPSteelwall'+str(i))
+                            structure.electricity = cols[1].number_input('Electricity consumption [kWh/h]', value=structure.electricity, step=1.0, help='Basic value 80 kWh/h', key='electricity_MIPSteelwall'+str(i))
+                            structure.distance_mob_demob = cols[2].number_input('Mob./ demob. distance [km]', value=structure.distance_mob_demob, step=10.0, help='One-way distance of transport for heavy machines', key='distance_mob_demob_MIPSteelwall'+str(i))
+                            structure.excess = cols[0].number_input('Excess bore [%]', value=structure.excess, step=5.0, help="Basic value: 25% for gravelly soil, 35% for sandy soil, 45% for cohesive soil. Distance to waste disposal: 20 km (not variable)", key='excess_MIPSteelwall'+str(i))
+                            # calc tCO2_eq
+                            sum_tco2_eq = structure.calc_co2eq()
+                            tab.markdown('### Results $tCO2eq$ for MIP wall with steel profiles: {0:.1f}'.format(sum_tco2_eq))
+                            col1, col2, col3 = tab.columns([4, 4, 2])
+                            col1.write('Material production [tCO2_eq]: {0:.1f}'.format(structure.out_material_production))
+                            col1.write('Material transport [tCO2_eq]: {0:.1f}'.format(structure.out_material_transport))
+                            col1.write('Disposal transport [tCO2_eq]: {0:.1f}'.format(structure.out_disposal_transport))
+                            col1.write('Equipment [tCO2_eq]: {0:.1f}'.format(structure.out_equipment))
+                            col1.write('Energy/ electricity/ hour [tCO2_eq]: {0:.1f}'.format(structure.out_energy_electricity_hour))
+                            col1.write('Mobilization/ demobilization [tCO2_eq]: {0:.1f}'.format(structure.out_mob_demob))
+                            col1.write('Persons transport [tCO2_eq]: {0:.1f}'.format(structure.out_persons_transport))
+                            axis = create_tCO2eq_piechart_matplotlib(structure)
+                            col2.pyplot(axis.figure, use_container_width=False)
+                        else:
+                            Steelstructure = 0
+                            tab.header('Details for MIP as cut-off wall')
+                            cols = tab.columns(3)
+                            structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPwall'+str(i))
+                            structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPwall'+str(i))
+                            structure.productivity = cols[2].number_input('Production rate (productivity) [m^2/working day]', value=structure.productivity, step=10.0, help='Basic value (without obstruction): 250 m^2/working day', key='productivity_MIPwall'+str(i))
+                            structure.cement = cols[0].number_input('Cement consumption [kg/m^3]', value=structure.cement, step=1.0, help='Basic setting: CEM III/B (not variable). Distance to concrete supplier: 20 km (not variable)', key='cement_MIPwall'+str(i))
+                            structure.betonite = cols[1].number_input('Betonite consumption [kg/m^3]', value=structure.betonite, step=1.0, help='Distance of betonite dilivery: 20 Km (not variable)', key='betonite_MIPwall'+str(i))
+                            #structure.support_fluid = cols[1].number_input('Betonite [kg/m^3]', value=structure.support_fluid, step=10.0, help='Distance to betonite supplier: 20 km (not variable)', key='support_fluid_MIPwall'+str(i))
+                            structure.diesel = cols[2].number_input('Diesel consumption [liter/working day]', value=structure.diesel, step=10.0, help='Basic value 750 liter/working day and 850 liter/working day respectively for ... Distance to diesel supplier: 10 km (not variable)', key='diesel_MIPwall'+str(i))
+                            structure.electricity = cols[0].number_input('Electricity consumption [kWh/h]', value=structure.electricity, step=1.0, help='Basic value 80 kWh/h', key='electricity_MIPwall'+str(i))
+                            structure.distance_mob_demob = cols[1].number_input('Mob./ demob. distance [km]', value=structure.distance_mob_demob, step=10.0, help='One-way distance of transport for heavy machines', key='distance_mob_demob_MIPwall'+str(i))
+                            structure.excess = cols[2].number_input('Excess bore [%]', value=structure.excess, step=5.0, help="Basic value: 25% for gravelly soil, 35% for sandy soil, 45% for cohesive soil. Distance to waste disposal: 20 km (not variable)", key='excess_MIPwall'+str(i))
+                            # calc tCO2_eq
+                            sum_tco2_eq = structure.calc_co2eq()
+                            tab.markdown('### Results $tCO2eq$ for MIP wall as cut-off wall: {0:.1f}'.format(sum_tco2_eq))
+                            col1, col2, col3 = tab.columns([4, 4, 2])
+                            col1.write('Material production [tCO2_eq]: {0:.1f}'.format(structure.out_material_production))
+                            col1.write('Material transport [tCO2_eq]: {0:.1f}'.format(structure.out_material_transport))
+                            col1.write('Disposal transport [tCO2_eq]: {0:.1f}'.format(structure.out_disposal_transport))
+                            col1.write('Equipment [tCO2_eq]: {0:.1f}'.format(structure.out_equipment))
+                            col1.write('Energy/ electricity/ hour [tCO2_eq]: {0:.1f}'.format(structure.out_energy_electricity_hour))
+                            col1.write('Mobilization/ demobilization [tCO2_eq]: {0:.1f}'.format(structure.out_mob_demob))
+                            col1.write('Persons transport [tCO2_eq]: {0:.1f}'.format(structure.out_persons_transport))
+                            axis = create_tCO2eq_piechart_matplotlib(structure)
+                            col2.pyplot(axis.figure, use_container_width=False)
 
                     elif isinstance(structure, MIPWall_EPD):
                         tab.header('Details for MIP as cut-off wall according to EPD')
-                        cols = tab.columns(3)
-                        structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPwall'+str(i))
-                        structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPwall'+str(i))
-                        MIP_classes = ['Class I', 'Class II', 'Class III', 'Class IV', 'Class V', 'Class VI']
-                        info_MIP_classes = """
-                        \nClass:     Cement content z [kg/m^3]
-                        \nI    :     60 <= z <= 100
-                        \nII   :     100 <= z <= 150
-                        \nIII  :     150 <= z <= 230
-                        \nIV   :     230 <= z <= 360
-                        \nV    :     360 <= z <= 520
-                        \nVI   :     520 <= z <= 600
-                        """
-                        structure.classification = cols[2].selectbox('BAUER MIP class (currently only for Class I)', MIP_classes, index=MIP_classes.index(structure.classification), help=info_MIP_classes, key='class_MIPwall'+str(i))  # string
-                        #structure.classification = MIP_classes.index(classification)# index
-                        # calc tCO2_eq
-                        sum_tco2_eq = structure.calc_co2eq()
-                        tab.markdown('### Results $tCO2eq$ for MIP wall as cut-off wall: {0:.1f}'.format(sum_tco2_eq))
+                        if st.checkbox('With  Steel structures'):
+                            Steelstructure = 1
+                            cols = tab.columns(3)
+                            structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
+                            structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPSteelwall'+str(i))
+                            structure.productivity = cols[2].number_input('Production rate (productivity) [m^2/working day]', value=structure.productivity, step=10.0, help='Basic value (without obstruction): 170 m^2/working day', key='productivity_MIPSteelwall'+str(i))
+                            structure.cement = cols[0].number_input('Cement consumption [kg/m^3]', value=structure.cement, step=1.0, help='Basic setting: CEM III/B (not variable). Distance to concrete supplier: 20 km (not variable)', key='cement_MIPSteelwall'+str(i))
+                            structure.betonite = cols[1].number_input('Betonite consumption [kg/m^3]', value=structure.betonite, step=1.0, help='Distance of betonite dilivery: 20 Km (not variable)', key='betonite_MIPSteelwall'+str(i))
+                            structure.weight_steelprofile = cols[2].number_input('Weight of steel beams [ton]', value=structure.weight_steelprofile, step=1.0, help='According to input field in EFFC Carbon Calculator. Distance to steel supplier: 300 km (not variable)', key='weight_steelprofile_MIPSteelwall'+str(i))
+                            #structure.support_fluid = cols[0].number_input('Betonite [kg/m^3]', value=structure.support_fluid, step=10.0, help='Distance to betonite supplier: 20 km (not variable)', key='support_fluid_MISteelPwall'+str(i))
+                            structure.diesel = cols[0].number_input('Diesel consumption [liter/working day]', value=structure.diesel, step=10.0, help='Basic value 750 liter/working day and 850 liter/working day respectively for ... Distance to diesel supplier: 10 km (not variable)', key='diesel_MIPSteelwall'+str(i))
+                            structure.electricity = cols[1].number_input('Electricity consumption [kWh/h]', value=structure.electricity, step=1.0, help='Basic value 80 kWh/h', key='electricity_MIPSteelwall'+str(i))
+                            structure.distance_mob_demob = cols[2].number_input('Mob./ demob. distance [km]', value=structure.distance_mob_demob, step=10.0, help='One-way distance of transport for heavy machines', key='distance_mob_demob_MIPSteelwall'+str(i))
+                            structure.excess = cols[0].number_input('Excess bore [%]', value=structure.excess, step=5.0, help="Basic value: 25% for gravelly soil, 35% for sandy soil, 45% for cohesive soil. Distance to waste disposal: 20 km (not variable)", key='excess_MIPSteelwall'+str(i))
+                            # calc tCO2_eq
+                            sum_tco2_eq = structure.calc_co2eq()
+                            tab.markdown('### Results $tCO2eq$ for MIP wall with steel profiles: {0:.1f}'.format(sum_tco2_eq))
+                            col1, col2, col3 = tab.columns([4, 4, 2])
+                            col1.write('Material production [tCO2_eq]: {0:.1f}'.format(structure.out_material_production))
+                            col1.write('Material transport [tCO2_eq]: {0:.1f}'.format(structure.out_material_transport))
+                            col1.write('Disposal transport [tCO2_eq]: {0:.1f}'.format(structure.out_disposal_transport))
+                            col1.write('Equipment [tCO2_eq]: {0:.1f}'.format(structure.out_equipment))
+                            col1.write('Energy/ electricity/ hour [tCO2_eq]: {0:.1f}'.format(structure.out_energy_electricity_hour))
+                            col1.write('Mobilization/ demobilization [tCO2_eq]: {0:.1f}'.format(structure.out_mob_demob))
+                            col1.write('Persons transport [tCO2_eq]: {0:.1f}'.format(structure.out_persons_transport))
+                            axis = create_tCO2eq_piechart_matplotlib(structure)
+                            col2.pyplot(axis.figure, use_container_width=False)
+                        else:
+                            Steelstructure = 0
+                            cols = tab.columns(3)
+                            structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPwall'+str(i))
+                            structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPwall'+str(i))
+                            MIP_classes = ['Class I', 'Class II', 'Class III', 'Class IV', 'Class V', 'Class VI']
+                            info_MIP_classes = """
+                            \nClass:     Cement content z [kg/m^3]
+                            \nI    :     60 <= z <= 100
+                            \nII   :     100 <= z <= 150
+                            \nIII  :     150 <= z <= 230
+                            \nIV   :     230 <= z <= 360
+                            \nV    :     360 <= z <= 520
+                            \nVI   :     520 <= z <= 600
+                            """
+                            structure.classification = cols[2].selectbox('BAUER MIP class (currently only for Class I)', MIP_classes, index=MIP_classes.index(structure.classification), help=info_MIP_classes, key='class_MIPwall'+str(i))  # string
+                            #structure.classification = MIP_classes.index(classification)# index
+                            # calc tCO2_eq
+                            sum_tco2_eq = structure.calc_co2eq()
+                            tab.markdown('### Results $tCO2eq$ for MIP wall as cut-off wall: {0:.1f}'.format(sum_tco2_eq))
 
-                    elif isinstance(structure, MIPSteelProfileWall):
-                        tab.header('Details for MIP wall with steel profiles')
-                        cols = tab.columns(3)
-                        structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
-                        structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPSteelwall'+str(i))
-                        structure.productivity = cols[2].number_input('Production rate (productivity) [m^2/working day]', value=structure.productivity, step=10.0, help='Basic value (without obstruction): 170 m^2/working day', key='productivity_MIPSteelwall'+str(i))
-                        structure.cement = cols[0].number_input('Cement consumption [kg/m^3]', value=structure.cement, step=1.0, help='Basic setting: CEM III/B (not variable). Distance to concrete supplier: 20 km (not variable)', key='cement_MIPSteelwall'+str(i))
-                        structure.betonite = cols[1].number_input('Betonite consumption [kg/m^3]', value=structure.betonite, step=1.0, help='Distance of betonite dilivery: 20 Km (not variable)', key='betonite_MIPSteelwall'+str(i))
-                        structure.weight_steelprofile = cols[2].number_input('Weight of steel beams [ton]', value=structure.weight_steelprofile, step=1.0, help='According to input field in EFFC Carbon Calculator. Distance to steel supplier: 300 km (not variable)', key='weight_steelprofile_MIPSteelwall'+str(i))
-                        #structure.support_fluid = cols[0].number_input('Betonite [kg/m^3]', value=structure.support_fluid, step=10.0, help='Distance to betonite supplier: 20 km (not variable)', key='support_fluid_MISteelPwall'+str(i))
-                        structure.diesel = cols[0].number_input('Diesel consumption [liter/working day]', value=structure.diesel, step=10.0, help='Basic value 750 liter/working day and 850 liter/working day respectively for ... Distance to diesel supplier: 10 km (not variable)', key='diesel_MIPSteelwall'+str(i))
-                        structure.electricity = cols[1].number_input('Electricity consumption [kWh/h]', value=structure.electricity, step=1.0, help='Basic value 80 kWh/h', key='electricity_MIPSteelwall'+str(i))
-                        structure.distance_mob_demob = cols[2].number_input('Mob./ demob. distance [km]', value=structure.distance_mob_demob, step=10.0, help='One-way distance of transport for heavy machines', key='distance_mob_demob_MIPSteelwall'+str(i))
-                        structure.excess = cols[0].number_input('Excess bore [%]', value=structure.excess, step=5.0, help="Basic value: 25% for gravelly soil, 35% for sandy soil, 45% for cohesive soil. Distance to waste disposal: 20 km (not variable)", key='excess_MIPSteelwall'+str(i))
-                        # calc tCO2_eq
-                        sum_tco2_eq = structure.calc_co2eq()
-                        tab.markdown('### Results $tCO2eq$ for MIP wall with steel profiles: {0:.1f}'.format(sum_tco2_eq))
-                        col1, col2, col3 = tab.columns([4, 4, 2])
-                        col1.write('Material production [tCO2_eq]: {0:.1f}'.format(structure.out_material_production))
-                        col1.write('Material transport [tCO2_eq]: {0:.1f}'.format(structure.out_material_transport))
-                        col1.write('Disposal transport [tCO2_eq]: {0:.1f}'.format(structure.out_disposal_transport))
-                        col1.write('Equipment [tCO2_eq]: {0:.1f}'.format(structure.out_equipment))
-                        col1.write('Energy/ electricity/ hour [tCO2_eq]: {0:.1f}'.format(structure.out_energy_electricity_hour))
-                        col1.write('Mobilization/ demobilization [tCO2_eq]: {0:.1f}'.format(structure.out_mob_demob))
-                        col1.write('Persons transport [tCO2_eq]: {0:.1f}'.format(structure.out_persons_transport))
-                        axis = create_tCO2eq_piechart_matplotlib(structure)
-                        col2.pyplot(axis.figure, use_container_width=False)
+                    # elif isinstance(structure, MIPSteelProfileWall):
+                    #     tab.header('Details for MIP wall with steel profiles')
+                    #     cols = tab.columns(3)
+                    #     structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
+                    #     structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPSteelwall'+str(i))
+                    #     structure.productivity = cols[2].number_input('Production rate (productivity) [m^2/working day]', value=structure.productivity, step=10.0, help='Basic value (without obstruction): 170 m^2/working day', key='productivity_MIPSteelwall'+str(i))
+                    #     structure.cement = cols[0].number_input('Cement consumption [kg/m^3]', value=structure.cement, step=1.0, help='Basic setting: CEM III/B (not variable). Distance to concrete supplier: 20 km (not variable)', key='cement_MIPSteelwall'+str(i))
+                    #     structure.betonite = cols[1].number_input('Betonite consumption [kg/m^3]', value=structure.betonite, step=1.0, help='Distance of betonite dilivery: 20 Km (not variable)', key='betonite_MIPSteelwall'+str(i))
+                    #     structure.weight_steelprofile = cols[2].number_input('Weight of steel beams [ton]', value=structure.weight_steelprofile, step=1.0, help='According to input field in EFFC Carbon Calculator. Distance to steel supplier: 300 km (not variable)', key='weight_steelprofile_MIPSteelwall'+str(i))
+                    #     #structure.support_fluid = cols[0].number_input('Betonite [kg/m^3]', value=structure.support_fluid, step=10.0, help='Distance to betonite supplier: 20 km (not variable)', key='support_fluid_MISteelPwall'+str(i))
+                    #     structure.diesel = cols[0].number_input('Diesel consumption [liter/working day]', value=structure.diesel, step=10.0, help='Basic value 750 liter/working day and 850 liter/working day respectively for ... Distance to diesel supplier: 10 km (not variable)', key='diesel_MIPSteelwall'+str(i))
+                    #     structure.electricity = cols[1].number_input('Electricity consumption [kWh/h]', value=structure.electricity, step=1.0, help='Basic value 80 kWh/h', key='electricity_MIPSteelwall'+str(i))
+                    #     structure.distance_mob_demob = cols[2].number_input('Mob./ demob. distance [km]', value=structure.distance_mob_demob, step=10.0, help='One-way distance of transport for heavy machines', key='distance_mob_demob_MIPSteelwall'+str(i))
+                    #     structure.excess = cols[0].number_input('Excess bore [%]', value=structure.excess, step=5.0, help="Basic value: 25% for gravelly soil, 35% for sandy soil, 45% for cohesive soil. Distance to waste disposal: 20 km (not variable)", key='excess_MIPSteelwall'+str(i))
+                    #     # calc tCO2_eq
+                    #     sum_tco2_eq = structure.calc_co2eq()
+                    #     tab.markdown('### Results $tCO2eq$ for MIP wall with steel profiles: {0:.1f}'.format(sum_tco2_eq))
+                    #     col1, col2, col3 = tab.columns([4, 4, 2])
+                    #     col1.write('Material production [tCO2_eq]: {0:.1f}'.format(structure.out_material_production))
+                    #     col1.write('Material transport [tCO2_eq]: {0:.1f}'.format(structure.out_material_transport))
+                    #     col1.write('Disposal transport [tCO2_eq]: {0:.1f}'.format(structure.out_disposal_transport))
+                    #     col1.write('Equipment [tCO2_eq]: {0:.1f}'.format(structure.out_equipment))
+                    #     col1.write('Energy/ electricity/ hour [tCO2_eq]: {0:.1f}'.format(structure.out_energy_electricity_hour))
+                    #     col1.write('Mobilization/ demobilization [tCO2_eq]: {0:.1f}'.format(structure.out_mob_demob))
+                    #     col1.write('Persons transport [tCO2_eq]: {0:.1f}'.format(structure.out_persons_transport))
+                    #     axis = create_tCO2eq_piechart_matplotlib(structure)
+                    #     col2.pyplot(axis.figure, use_container_width=False)
 
-                    elif isinstance(structure, MIPSteelProfileWall_EPD):
-                        tab.header('Details for MIP wall with steel profiles according to EPD')
-                        cols = tab.columns(4)
-                        structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
-                        structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPSteelwall'+str(i))
-                        MIP_classes = ['Class I', 'Class II', 'Class III', 'Class IV', 'Class V', 'Class VI']
-                        info_MIP_classes = """
-                        \nClass:     Cement content z [kg/m^3]
-                        \nI    :     60 <= z <= 100
-                        \nII   :     100 <= z <= 150
-                        \nIII  :     150 <= z <= 230
-                        \nIV   :     230 <= z <= 360
-                        \nV    :     360 <= z <= 520
-                        \nVI   :     520 <= z <= 600
-                        """
-                        structure.classification = cols[2].selectbox('BAUER MIP class (currently only for Class I)', MIP_classes, index=MIP_classes.index(structure.classification), help=info_MIP_classes, key='class_MIPSteelWall'+str(i))  # string
+                    # elif isinstance(structure, MIPSteelProfileWall_EPD):
+                    #     tab.header('Details for MIP wall with steel profiles according to EPD')
+                    #     cols = tab.columns(4)
+                    #     structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
+                    #     structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPSteelwall'+str(i))
+                    #     MIP_classes = ['Class I', 'Class II', 'Class III', 'Class IV', 'Class V', 'Class VI']
+                    #     info_MIP_classes = """
+                    #     \nClass:     Cement content z [kg/m^3]
+                    #     \nI    :     60 <= z <= 100
+                    #     \nII   :     100 <= z <= 150
+                    #     \nIII  :     150 <= z <= 230
+                    #     \nIV   :     230 <= z <= 360
+                    #     \nV    :     360 <= z <= 520
+                    #     \nVI   :     520 <= z <= 600
+                    #     """
+                    #     structure.classification = cols[2].selectbox('BAUER MIP class (currently only for Class I)', MIP_classes, index=MIP_classes.index(structure.classification), help=info_MIP_classes, key='class_MIPSteelWall'+str(i))  # string
 
-                        structure.weight_steelprofile = cols[3].number_input('Weight of steel beams [ton]', value=structure.weight_steelprofile, step=1.0, help='According to input field in EFFC Carbon Calculator. Distance to steel supplier: 300 km (not variable)', key='weight_steelprofile_MIPSteelwall'+str(i))
-                        #structure.classification = MIP_classes.index(classification)# index
-                        # calc tCO2_eq
-                        sum_tco2_eq = structure.calc_co2eq()
-                        tab.markdown('### Results $tCO2eq$ for MIP wall as cut-off wall: {0:.1f}'.format(sum_tco2_eq))
+                    #     structure.weight_steelprofile = cols[3].number_input('Weight of steel beams [ton]', value=structure.weight_steelprofile, step=1.0, help='According to input field in EFFC Carbon Calculator. Distance to steel supplier: 300 km (not variable)', key='weight_steelprofile_MIPSteelwall'+str(i))
+                    #     #structure.classification = MIP_classes.index(classification)# index
+                    #     # calc tCO2_eq
+                    #     sum_tco2_eq = structure.calc_co2eq()
+                    #     tab.markdown('### Results $tCO2eq$ for MIP wall as cut-off wall: {0:.1f}'.format(sum_tco2_eq))
 
         with tabs[-1]: # All projects
             #st.header('$tCO2eq$ summary')
@@ -360,13 +418,19 @@ def continue_program(st, parameters):
                     elif isinstance(structure, DiaphragmWall):
                         cols[i].write('Diaphragm wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
                     elif isinstance(structure, MIPWall):
-                        cols[i].write('MIP as cut-off wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+                        if Steelstructure == 0:
+                            cols[i].write('MIP as cut-off wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+                        elif Steelstructure ==1:
+                            cols[i].write('MIP wall with steel profiles $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+                        else:
+                            cols[i].write('MIP wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
                     elif isinstance(structure, MIPWall_EPD):
-                        cols[i].write('MIP as cut-off wall according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
-                    elif isinstance(structure, MIPSteelProfileWall):
-                        cols[i].write('MIP wall with steel profiles $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
-                    elif isinstance(structure, MIPSteelProfileWall_EPD):
-                        cols[i].write('MIP wall with steel profiles according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+                        if Steelstructure == 0:
+                            cols[i].write('MIP as cut-off wall according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+                        elif Steelstructure ==1:   
+                            cols[i].write('MIP wall with steel profiles according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+                        else:
+                            cols[i].write('MIP wall according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
 
             #try:
             #col1, col2 = st.columns(2)
