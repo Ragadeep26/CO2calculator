@@ -240,7 +240,7 @@ def continue_program(st, parameters):
 
                     elif isinstance(structure, MIPWall):
                         if st.checkbox('with steel structures'):
-                            add_structures_to_projects('MIP wall with steel profiles', project_names_to_be_assigned, parameters['projects'])
+                            structure = parameters['MIP wall with steel profiles'][0].structures
                             tab.header('Details for MIP wall with steel profiles')
                             cols = tab.columns(3)
                             structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
