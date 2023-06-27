@@ -8,7 +8,7 @@
 #font = "sans-serif"
 
 [theme]
-backgroundColor = "#00172B"
+backgroundColor = "#F8F8FF"
 secondaryBackgroundColor = "#0083B8"
 textColor = "#DCDCDC"
 font = "sans-serif"
