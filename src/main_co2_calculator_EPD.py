@@ -240,9 +240,8 @@ def continue_program(st, parameters):
 
                     elif isinstance(structure, MIPWall):
                         if st.checkbox('with steel structures'):
-                            add_structures_to_projects('MIP wall with steel profiles', project_names_to_be_assigned, parameters['projects'])
-                            structure = parameters['projects'][-1].structures
-                            st.write(structure)
+                            structure = MIPSteelProfileWall()
+                            #st.write(structure)
                             tab.header('Details for MIP wall with steel profiles')
                             cols = tab.columns(3)
                             structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
@@ -298,25 +297,49 @@ def continue_program(st, parameters):
                         col2.pyplot(axis.figure, use_container_width=False)
 
                     elif isinstance(structure, MIPWall_EPD):
-                        tab.header('Details for MIP as cut-off wall according to EPD')
-                        cols = tab.columns(3)
-                        structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPwall'+str(i))
-                        structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPwall'+str(i))
-                        MIP_classes = ['Class I', 'Class II', 'Class III', 'Class IV', 'Class V', 'Class VI']
-                        info_MIP_classes = """
-                        \nClass:     Cement content z [kg/m^3]
-                        \nI    :     60 <= z <= 100
-                        \nII   :     100 <= z <= 150
-                        \nIII  :     150 <= z <= 230
-                        \nIV   :     230 <= z <= 360
-                        \nV    :     360 <= z <= 520
-                        \nVI   :     520 <= z <= 600
-                        """
-                        structure.classification = cols[2].selectbox('BAUER MIP class (currently only for Class I)', MIP_classes, index=MIP_classes.index(structure.classification), help=info_MIP_classes, key='class_MIPwall'+str(i))  # string
-                        #structure.classification = MIP_classes.index(classification)# index
-                        # calc tCO2_eq
-                        sum_tco2_eq = structure.calc_co2eq()
-                        tab.markdown('### Results $tCO2eq$ for MIP wall as cut-off wall: {0:.1f}'.format(sum_tco2_eq))
+                        if st.checkbox('With Steel structures EPD'):
+                            structure = MIPSteelProfileWall_EPD()
+                            tab.header('Details for MIP wall with steel profiles according to EPD')
+                            cols = tab.columns(4)
+                            structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
+                            structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPSteelwall'+str(i))
+                            MIP_classes = ['Class I', 'Class II', 'Class III', 'Class IV', 'Class V', 'Class VI']
+                            info_MIP_classes = """
+                            \nClass:     Cement content z [kg/m^3]
+                            \nI    :     60 <= z <= 100
+                            \nII   :     100 <= z <= 150
+                            \nIII  :     150 <= z <= 230
+                            \nIV   :     230 <= z <= 360
+                            \nV    :     360 <= z <= 520
+                            \nVI   :     520 <= z <= 600
+                            """
+                            structure.classification = cols[2].selectbox('BAUER MIP class (currently only for Class I)', MIP_classes, index=MIP_classes.index(structure.classification), help=info_MIP_classes, key='class_MIPSteelWall'+str(i))  # string
+
+                            structure.weight_steelprofile = cols[3].number_input('Weight of steel beams [ton]', value=structure.weight_steelprofile, step=1.0, help='According to input field in EFFC Carbon Calculator. Distance to steel supplier: 300 km (not variable)', key='weight_steelprofile_MIPSteelwall'+str(i))
+                            #structure.classification = MIP_classes.index(classification)# index
+                            # calc tCO2_eq
+                            sum_tco2_eq = structure.calc_co2eq()
+                            tab.markdown('### Results $tCO2eq$ for MIP wall as cut-off wall: {0:.1f}'.format(sum_tco2_eq))
+                        else:
+                            tab.header('Details for MIP as cut-off wall according to EPD')
+                            cols = tab.columns(3)
+                            structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPwall'+str(i))
+                            structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPwall'+str(i))
+                            MIP_classes = ['Class I', 'Class II', 'Class III', 'Class IV', 'Class V', 'Class VI']
+                            info_MIP_classes = """
+                            \nClass:     Cement content z [kg/m^3]
+                            \nI    :     60 <= z <= 100
+                            \nII   :     100 <= z <= 150
+                            \nIII  :     150 <= z <= 230
+                            \nIV   :     230 <= z <= 360
+                            \nV    :     360 <= z <= 520
+                            \nVI   :     520 <= z <= 600
+                            """
+                            structure.classification = cols[2].selectbox('BAUER MIP class (currently only for Class I)', MIP_classes, index=MIP_classes.index(structure.classification), help=info_MIP_classes, key='class_MIPwall'+str(i))  # string
+                            #structure.classification = MIP_classes.index(classification)# index
+                            # calc tCO2_eq
+                            sum_tco2_eq = structure.calc_co2eq()
+                            tab.markdown('### Results $tCO2eq$ for MIP wall as cut-off wall: {0:.1f}'.format(sum_tco2_eq))
 
                     # elif isinstance(structure, MIPSteelProfileWall):
                     #     tab.header('Details for MIP wall with steel profiles')
