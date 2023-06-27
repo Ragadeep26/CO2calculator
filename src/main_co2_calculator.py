@@ -238,7 +238,7 @@ def continue_program(st, parameters):
 
                     elif isinstance(structure, MIPWall):
                         tab.header('Details for MIP as cut-off wall')
-                        if st.button('With  Steel structures'):
+                        if st.checkbox('With  Steel structures'):
                             cols = tab.columns(3)
                             structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
                             structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPSteelwall'+str(i))
