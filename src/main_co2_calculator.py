@@ -157,7 +157,7 @@ def continue_program(st, parameters):
                         col1.write('Persons transport [tCO2_eq]: {0:.1f}'.format(structure.out_persons_transport))
                         #tab.write(df)
                         axis = create_tCO2eq_piechart_matplotlib(structure)
-                        col2.pyplot(axis.figure, use_container_width=False)
+                        col2.pyplot(axis.figure)
 
 
                     if isinstance(structure, PileWall):
@@ -196,7 +196,7 @@ def continue_program(st, parameters):
                         col1.write('Mobilization/ demobilization [tCO2_eq]: {0:.1f}'.format(structure.out_mob_demob))
                         col1.write('Persons transport [tCO2_eq]: {0:.1f}'.format(structure.out_persons_transport))
                         axis = create_tCO2eq_piechart_matplotlib(structure)
-                        col2.pyplot(axis.figure, use_container_width=False)
+                        col2.pyplot(axis.figure)
 
                     elif isinstance(structure, DiaphragmWall):
                         tab.header('Details for diaphragm wall')
@@ -289,7 +289,7 @@ def continue_program(st, parameters):
                         col1.write('Mobilization/ demobilization [tCO2_eq]: {0:.1f}'.format(structure.out_mob_demob))
                         col1.write('Persons transport [tCO2_eq]: {0:.1f}'.format(structure.out_persons_transport))
                         axis = create_tCO2eq_piechart_matplotlib(structure)
-                        col2.pyplot(axis.figure, use_container_width=False)
+                        col2.pyplot(axis.figure)
 
         with tabs[-1]: # All projects
             #st.header('$tCO2eq$ summary')
@@ -338,7 +338,7 @@ def continue_program(st, parameters):
                 #_, axis_projs, df_prjs = create_tCO2eq_barchart_all_projects_matplotlib(parameters['projects'])
                 _, axis_cats, df_cats = create_tCO2eq_barchart_all_categories_matplotlib(parameters['projects'])
                 #col1.pyplot(axis_projs.figure, use_container_width=False)
-                st.pyplot(axis_cats.figure, use_container_width=False)
+                st.pyplot(axis_cats.figure)
 
             except: # exception when a project has no structures assigned to it
                 pass
