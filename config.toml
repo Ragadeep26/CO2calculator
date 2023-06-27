@@ -1,0 +1,32 @@
+# Below are all the sections and options you can have in ~/.streamlit/config.toml.
+
+[global]
+disableWatchdogWarning = false
+showWarningOnDirectExecution = true
+
+[client]
+caching = true
+displayEnabled = true
+
+[runner]
+magicEnabled = true
+installTracer = false
+fixMatplotlib = true
+
+
+[server]
+folderWatchBlacklist = ['']
+cookieSecret = "c7Vg6j2h5Z5x-VE8XdM+H9_"
+headless = true
+runOnSave = false
+port = 80
+enableCORS = true
+enableXsrfProtection = false
+
+[theme]
+base = "dark"
+
+[browser]
+serverAddress = "https://co2calculator-8w81bpger0r.streamlit.app"
+gatherUsageStats = false
+serverPort = 80
