@@ -1,9 +1,11 @@
 # Below are all the sections and options you can have in ~/.streamlit/config.toml.
 
-[theme]
-primaryColor = "#E694FF"
-backgroundColor = "#00172B"
-secondaryBackgroundColor = "#0083B8"
-textColor = "#DCDCDC"
-font = "sans-serif"
+#[theme]
+#primaryColor = "#E694FF"
+#backgroundColor = "#00172B"
+#secondaryBackgroundColor = "#0083B8"
+#textColor = "#DCDCDC"
+#font = "sans-serif"
 
+[theme]
+secondaryBackgroundColor = "#0083B8"
