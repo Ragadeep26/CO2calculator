@@ -551,10 +551,8 @@ def add_structures_to_projects(structures_to_assign, project_names_to_be_assigne
                     project.add_structure(Anchor())
                 elif structure == 'MIP wall':
                     project.add_structure(MIPWall())
-                    index = structures_to_assign.index(structure)
                 elif structure == 'MIP wall EPD':
                     project.add_structure(MIPWall_EPD())
-                    index = structures_to_assign.index(structure)
                 elif structure == 'Pile/ Pile wall':
                     project.add_structure(PileWall())
                 elif structure == 'Diaphragm wall':
@@ -578,9 +576,9 @@ def replace_structures_from_projects(project_names_to_be_assigned, projects, str
         if project.project_variant in project_names_to_be_assigned:
             for structure in structures_to_assign:
                 if structure == 'MIP wall':
-                    project.replace_structure(structure)
+                    project.replace_structure(structure, MIPSteelProfileWall())
                 elif structure == 'MIP wall EPD':
-                    project.replace_structure(structure)
+                    project.replace_structure(structure, MIPSteelProfileWall_EPD())
                 else:
                     pass
 
