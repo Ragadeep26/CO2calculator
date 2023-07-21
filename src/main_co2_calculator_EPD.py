@@ -457,13 +457,16 @@ def continue_program(st, parameters):
                 _, axis_cats, df_cats = create_tCO2eq_barchart_epd_matplotlib(parameters['projects'])
                 st.pyplot(axis_cats.figure, use_container_width=False)
 
-            if is_steel:
-                if isinstance(structure, MIPWall_EPD):
-                    structure = MIPSteelProfileWall_EPD()
-                elif isinstance(structure, MIPWall):
-                    structure = MIPSteelProfileWall()
-                else:
-                    pass
+            for project in parameters['projects']:
+                for structure in project.structures:
+                    if is_steel:
+                        if isinstance(structure, MIPWall_EPD):
+                            structure = MIPSteelProfileWall_EPD()
+                        elif isinstance(structure, MIPWall):
+                            structure = MIPSteelProfileWall()
+                        else:
+                            break
+                        
 
             else:
                 if len(parameters['projects']) > 1:
