@@ -242,7 +242,7 @@ def continue_program(st, parameters):
                     elif isinstance(structure, MIPWall):
                         if st.checkbox('with steel structures'):
                             structure = MIPSteelProfileWall()
-                            replace_structures_from_projects(project_names_to_be_assigned, parameters['projects'], structures_to_assign)
+                            steel_check(project_names_to_be_assigned, parameters['projects'], structures_to_assign)
                             steelstructure = True
                             tab.header('Details for MIP wall with steel profiles')
                             cols = tab.columns(3)
@@ -272,6 +272,8 @@ def continue_program(st, parameters):
                             col2.pyplot(axis.figure, use_container_width=False)
                             #remove_structures_from_projects(project_names_to_be_assigned, parameters['projects'])
                         else:
+                            steel_uncheck(project_names_to_be_assigned, parameters['projects'], structures_to_assign)
+                            steelstructure = False
                             tab.header('Details for MIP as cut-off wall')
                             cols = tab.columns(3)
                             steelstructure = False
@@ -303,6 +305,7 @@ def continue_program(st, parameters):
                         if st.checkbox('With Steel structures EPD'):
                             structure = MIPSteelProfileWall_EPD()
                             steelstructure = True
+                            steel_check(project_names_to_be_assigned, parameters['projects'], structures_to_assign)
                             tab.header('Details for MIP wall with steel profiles according to EPD')
                             cols = tab.columns(4)
                             structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
@@ -326,6 +329,7 @@ def continue_program(st, parameters):
                             tab.markdown('### Results $tCO2eq$ for MIP wall as cut-off wall: {0:.1f}'.format(sum_tco2_eq))
                         else:
                             steelstructure = False
+                            steel_uncheck(project_names_to_be_assigned, parameters['projects'], structures_to_assign)
                             tab.header('Details for MIP as cut-off wall according to EPD')
                             cols = tab.columns(3)
                             structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPwall'+str(i))
@@ -570,7 +574,7 @@ def remove_structures_from_projects(project_names_to_be_assigned, projects):
             while project.structures:   # remove structure until structures list is empty
                 project.structures.pop()
 
-def replace_structures_from_projects(project_names_to_be_assigned, projects, structures_to_assign):
+def steel_check(project_names_to_be_assigned, projects, structures_to_assign):
     """ Replaces structures from the selected project(s)
     """
     for project in projects:
@@ -582,6 +586,19 @@ def replace_structures_from_projects(project_names_to_be_assigned, projects, str
                     project.replace_structure(MIPWall_EPD(), MIPSteelProfileWall_EPD())
                 else:
                     pass
+def steel_uncheck(project_names_to_be_assigned, projects, structures_to_assign):
+    """ Replaces structures from the selected project(s)"""
+    for project in projects:
+        if project.project_variant in project_names_to_be_assigned:
+            for structure in structures_to_assign:
+                if structure == 'MIP wall':
+                    project.replace_structure(MIPSteelProfileWall(),MIPWall())
+                elif structure == 'MIP wall EPD':
+                    project.replace_structure(MIPSteelProfileWall_EPD(),MIPWall_EPD())
+                else:
+                    pass
+
+            
 
 def remove_projects(projects_to_remove, parameters):
     """ Removes one or more selected projects
