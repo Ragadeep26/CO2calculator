@@ -242,6 +242,7 @@ def continue_program(st, parameters):
                     elif isinstance(structure, MIPWall):
                         if st.checkbox('with steel structures'):
                             structure = MIPSteelProfileWall()
+                            replace_structures_from_projects(project_names_to_be_assigned, parameters['projects'], structures_to_assign)
                             steelstructure = True
                             tab.header('Details for MIP wall with steel profiles')
                             cols = tab.columns(3)
@@ -409,8 +410,8 @@ def continue_program(st, parameters):
 
             cols = st.columns(len(parameters['projects']))
 
-            if steelstructure:
-                replace_structures_from_projects(project_names_to_be_assigned, parameters['projects'], structures_to_assign)
+            # if steelstructure:
+            #     replace_structures_from_projects(project_names_to_be_assigned, parameters['projects'], structures_to_assign)
 
             for i, project in enumerate(parameters['projects']):
                 cols[i].markdown('### ' + project.project_variant)
