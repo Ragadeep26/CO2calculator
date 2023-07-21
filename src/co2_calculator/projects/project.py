@@ -18,6 +18,6 @@ class Project():
 
     def replace_structure(self, structure_to_replace, replace_with):
         """replaces a structure from project"""
-        index = self.structures.index(structure_to_replace)
-        self.structures[index] = replace_with
+        self.remove_structure(structure_to_replace)
+        self.structures.append(replace_with)
  
