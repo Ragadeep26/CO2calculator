@@ -241,6 +241,7 @@ def continue_program(st, parameters):
                     elif isinstance(structure, MIPWall):
                         if st.checkbox('with steel structures'):
                             structure = MIPSteelProfileWall()
+                            steelstructure = True
                             #st.write(structure)
                             tab.header('Details for MIP wall with steel profiles')
                             cols = tab.columns(3)
@@ -272,6 +273,7 @@ def continue_program(st, parameters):
                         else:
                             tab.header('Details for MIP as cut-off wall')
                             cols = tab.columns(3)
+                            steelstructure = False
                             structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPwall'+str(i))
                             structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPwall'+str(i))
                             structure.productivity = cols[2].number_input('Production rate (productivity) [m^2/working day]', value=structure.productivity, step=10.0, help='Basic value (without obstruction): 250 m^2/working day', key='productivity_MIPwall'+str(i))
@@ -299,6 +301,7 @@ def continue_program(st, parameters):
                     elif isinstance(structure, MIPWall_EPD):
                         if st.checkbox('With Steel structures EPD'):
                             structure = MIPSteelProfileWall_EPD()
+                            steelstructure = True
                             tab.header('Details for MIP wall with steel profiles according to EPD')
                             cols = tab.columns(4)
                             structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
@@ -321,6 +324,7 @@ def continue_program(st, parameters):
                             sum_tco2_eq = structure.calc_co2eq()
                             tab.markdown('### Results $tCO2eq$ for MIP wall as cut-off wall: {0:.1f}'.format(sum_tco2_eq))
                         else:
+                            steelstructure = False
                             tab.header('Details for MIP as cut-off wall according to EPD')
                             cols = tab.columns(3)
                             structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPwall'+str(i))
@@ -415,13 +419,20 @@ def continue_program(st, parameters):
                     elif isinstance(structure, DiaphragmWall):
                         cols[i].write('Diaphragm wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
                     elif isinstance(structure, MIPWall):
-                        cols[i].write('MIP as cut-off wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+                        if steelstructure == True:
+                            cols[i].write('MIP wall with steel profiles $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+                        else:
+                            cols[i].write('MIP as cut-off wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))    
                     elif isinstance(structure, MIPWall_EPD):
-                        cols[i].write('MIP as cut-off wall according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
-                    elif isinstance(structure, MIPSteelProfileWall):
-                        cols[i].write('MIP wall with steel profiles $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
-                    elif isinstance(structure, MIPSteelProfileWall_EPD):
-                        cols[i].write('MIP wall with steel profiles according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+                        if steelstructure == True:
+                            cols[i].write('MIP wall with steel profiles according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+                        else:
+                            cols[i].write('MIP as cut-off wall according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+
+                    # elif isinstance(structure, MIPSteelProfileWall):
+                    #     cols[i].write('MIP wall with steel profiles $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+                    # elif isinstance(structure, MIPSteelProfileWall_EPD):
+                    #     cols[i].write('MIP wall with steel profiles according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
 
             #try:
             #col1, col2 = st.columns(2)
