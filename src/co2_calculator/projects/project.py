@@ -15,3 +15,8 @@ class Project():
         for i, structure in enumerate(self.structures):
             if structure.id == structure_to_remove.id:
                 self.structures.pop(i)
+
+    def replace_structure(self,structure_to_replace):
+        for i, structure in enumerate(self.structures):
+            structure[i] = structure_to_replace
+ 
