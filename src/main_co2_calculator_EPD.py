@@ -120,7 +120,7 @@ def continue_program(st, parameters):
         add_structures_to_projects(structures_to_assign, project_names_to_be_assigned, parameters['projects'])
 
     # foundation structures for each project
-    steelstructure =  False #forMIP
+    # steelstructure =  False #forMIP
     if parameters['projects']:
         project_names = [project.project_variant for project in parameters['projects']] + ['Summary']
         tabs = st.tabs(project_names)
@@ -346,7 +346,11 @@ def continue_program(st, parameters):
                             sum_tco2_eq = structure.calc_co2eq()
                             tab.markdown('### Results $tCO2eq$ for MIP wall as cut-off wall: {0:.1f}'.format(sum_tco2_eq))
 
-
+        if steelstructure:
+            steel_check(project_names_to_be_assigned, parameters['projects'], structures_to_assign)
+        elif steelstructure == False:
+            steel_uncheck(project_names_to_be_assigned, parameters['projects'], structures_to_assign)
+        
         with tabs[-1]: # All projects
             #st.header('$tCO2eq$ summary')
             #st.markdown('### $tCO2eq$ total')
