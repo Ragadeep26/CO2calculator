@@ -446,9 +446,9 @@ def continue_program(st, parameters):
                     if isinstance(structure, MIPWall_EPD):
                         is_epd = True
                         break
-                    if steelstructure == True:
-                        is_steel = True
-                        break
+                    # if steelstructure == True:
+                    #     is_steel = True
+                    #     break
             if is_epd:
                 if len(parameters['projects']) > 1:
                     st.header('$tCO2eq$ for all construction variants')
@@ -459,7 +459,7 @@ def continue_program(st, parameters):
 
             for project in parameters['projects']:
                 for structure in project.structures:
-                    if is_steel:
+                    if steelstructure:
                         if isinstance(structure, MIPWall_EPD):
                             structure = MIPSteelProfileWall_EPD()
                         elif isinstance(structure, MIPWall):
