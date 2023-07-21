@@ -242,7 +242,7 @@ def continue_program(st, parameters):
                         if st.checkbox('with steel structures'):
                             structure = MIPSteelProfileWall()
                             steelstructure = True
-                            parameters['projects'] = Project('MIPWall',[structure])
+                            parameters['projects'].replace(Project('MIPWall',[structure]))
                             #st.write(structure)
                             tab.header('Details for MIP wall with steel profiles')
                             cols = tab.columns(3)
