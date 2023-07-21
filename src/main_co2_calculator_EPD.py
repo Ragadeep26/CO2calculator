@@ -244,7 +244,7 @@ def continue_program(st, parameters):
                             steelstructure = True
                             #newproject = Project.replace_structure(structure)
                             # newparamsindex = parameters['projects'].index('MIPWall')
-                            parameters['projects'] = parameters['projects'][:i]+[Project('MIPWall',structure)]+parameters['projects'][i+1:]
+                            parameters['projects'] = parameters['projects'][:i]+[Project('MIPWall',[structure])]+parameters['projects'][i+1:]
 
                             #st.write(structure)
                             tab.header('Details for MIP wall with steel profiles')
