@@ -420,11 +420,15 @@ def continue_program(st, parameters):
                         cols[i].write('Diaphragm wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
                     elif isinstance(structure, MIPWall):
                         if steelstructure == True:
+                            structure = MIPSteelProfileWall()
+                            structure_tco2_eq = structure.calc_co2eq()
                             cols[i].write('MIP wall with steel profiles $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
                         else:
                             cols[i].write('MIP as cut-off wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))    
                     elif isinstance(structure, MIPWall_EPD):
                         if steelstructure == True:
+                            structure = MIPSteelProfileWall_EPD()
+                            structure_tco2_eq = structure.calc_co2eq()
                             cols[i].write('MIP wall with steel profiles according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
                         else:
                             cols[i].write('MIP as cut-off wall according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
