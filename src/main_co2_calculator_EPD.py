@@ -242,9 +242,9 @@ def continue_program(st, parameters):
                         if st.checkbox('with steel structures'):
                             structure = MIPSteelProfileWall()
                             steelstructure = True
-                            #newproject = Project.replace_structure(structure)
-                            # newparamsindex = parameters['projects'].index('MIPWall')
-                            parameters['projects'] = parameters['projects'][:i]+[Project.replace_structure(structure)]+parameters['projects'][i+1:]
+                            # newproject = Project.replace_structure(structure)
+                            # parameters['projects'] = parameters['projects'][:i]+[newproject]+parameters['projects'][i+1:]
+                            replace_structures_from_projects(project_names_to_be_assigned, parameters['projects'], structure, i)
                             #st.write(structure)
                             tab.header('Details for MIP wall with steel profiles')
                             cols = tab.columns(3)
@@ -577,6 +577,12 @@ def remove_structures_from_projects(project_names_to_be_assigned, projects):
             while project.structures:   # remove structure until structures list is empty
                 project.structures.pop()
 
+def replace_structures_from_projects(project_names_to_be_assigned, projects, structure_to_replace, index):
+    """ Replaces structures from the selected project(s)
+    """
+    for project in projects:
+        if project.project_variant in project_names_to_be_assigned:
+            project.structures = project.structures[:index]+[structure_to_replace]+project.structures[index+1:]
 
 def remove_projects(projects_to_remove, parameters):
     """ Removes one or more selected projects
