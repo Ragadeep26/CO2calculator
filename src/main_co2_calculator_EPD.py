@@ -242,6 +242,7 @@ def continue_program(st, parameters):
                         if st.checkbox('with steel structures'):
                             structure = MIPSteelProfileWall()
                             steelstructure = True
+                            parameters['projects'] = Project('MIPWall',[structure])
                             #st.write(structure)
                             tab.header('Details for MIP wall with steel profiles')
                             cols = tab.columns(3)
@@ -470,13 +471,13 @@ def continue_program(st, parameters):
                     cols[i%4].write('{0}: {1}'.format(key, value))
 
                 #_, axis_projs, df_prjs = create_tCO2eq_barchart_all_projects_matplotlib(parameters['projects'])
-                if steelstructure:
-                    projectsteel = Project('MIPwithsteelstructure', ['MIPwithsteelstructure'])
-                    projectsteel.add_structure(MIPSteelProfileWall())
-                    parameters['projectsteel'].append(projectsteel)
-                    _, axis_cats, df_cats = create_tCO2eq_barchart_all_categories_matplotlib(parameters['projectsteel'])
-                else:
-                    _, axis_cats, df_cats = create_tCO2eq_barchart_all_categories_matplotlib(parameters['projects'])
+                # if steelstructure:
+                #     # projectsteel = Project('MIPwithsteelstructure', ['MIPwithsteelstructure'])
+                #     # projectsteel.add_structure(MIPSteelProfileWall())
+                #     # parameters['projectsteel'].append(projectsteel)
+                #     _, axis_cats, df_cats = create_tCO2eq_barchart_all_categories_matplotlib(parameters['projectsteel'])
+                # else:
+                _, axis_cats, df_cats = create_tCO2eq_barchart_all_categories_matplotlib(parameters['projects'])
                 #col1.pyplot(axis_projs.figure, use_container_width=False)
                 st.pyplot(axis_cats.figure, use_container_width=False)
 
