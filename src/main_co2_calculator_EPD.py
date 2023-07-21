@@ -471,7 +471,7 @@ def continue_program(st, parameters):
 
                 #_, axis_projs, df_prjs = create_tCO2eq_barchart_all_projects_matplotlib(parameters['projects'])
                 if steelstructure:
-                    _, axis_cats, df_cats = create_tCO2eq_barchart_all_categories_matplotlib(Project.add_structure(MIPSteelProfileWall()))
+                    _, axis_cats, df_cats = create_tCO2eq_barchart_all_categories_matplotlib(Project.add_structure("Withsteelstructure", MIPSteelProfileWall()))
                 else:
                     _, axis_cats, df_cats = create_tCO2eq_barchart_all_categories_matplotlib(parameters['projects'])
                 #col1.pyplot(axis_projs.figure, use_container_width=False)
