@@ -578,9 +578,9 @@ def replace_structures_from_projects(project_names_to_be_assigned, projects, str
         if project.project_variant in project_names_to_be_assigned:
             for structure in structures_to_assign:
                 if structure == 'MIP wall':
-                    project.replace_structure(MIPSteelProfileWall())
+                    project.replace_structure(structure)
                 elif structure == 'MIP wall EPD':
-                    project.replace_structure(MIPSteelProfileWall_EPD())
+                    project.replace_structure(structure)
                 else:
                     pass
 
