@@ -303,7 +303,6 @@ def continue_program(st, parameters):
                         if st.checkbox('With Steel structures EPD'):
                             structure = MIPSteelProfileWall_EPD()
                             steelstructure = True
-                            parameters['projects'] = parameters['projects'][:i]+[Project('MIPWall_EPD',[structure])]+parameters['projects'][i+1:]
                             tab.header('Details for MIP wall with steel profiles according to EPD')
                             cols = tab.columns(4)
                             structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
@@ -375,28 +374,28 @@ def continue_program(st, parameters):
                     #     axis = create_tCO2eq_piechart_matplotlib(structure)
                     #     col2.pyplot(axis.figure, use_container_width=False)
 
-                    elif isinstance(structure, MIPSteelProfileWall_EPD):
-                        tab.header('Details for MIP wall with steel profiles according to EPD')
-                        cols = tab.columns(4)
-                        structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
-                        structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPSteelwall'+str(i))
-                        MIP_classes = ['Class I', 'Class II', 'Class III', 'Class IV', 'Class V', 'Class VI']
-                        info_MIP_classes = """
-                        \nClass:     Cement content z [kg/m^3]
-                        \nI    :     60 <= z <= 100
-                        \nII   :     100 <= z <= 150
-                        \nIII  :     150 <= z <= 230
-                        \nIV   :     230 <= z <= 360
-                        \nV    :     360 <= z <= 520
-                        \nVI   :     520 <= z <= 600
-                        """
-                        structure.classification = cols[2].selectbox('BAUER MIP class (currently only for Class I)', MIP_classes, index=MIP_classes.index(structure.classification), help=info_MIP_classes, key='class_MIPSteelWall'+str(i))  # string
+                    # elif isinstance(structure, MIPSteelProfileWall_EPD):
+                    #     tab.header('Details for MIP wall with steel profiles according to EPD')
+                    #     cols = tab.columns(4)
+                    #     structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
+                    #     structure.wall_thickness = cols[1].number_input('Wall thickness [m]', value=structure.wall_thickness, step=0.1, key='wall_thickness_MIPSteelwall'+str(i))
+                    #     MIP_classes = ['Class I', 'Class II', 'Class III', 'Class IV', 'Class V', 'Class VI']
+                    #     info_MIP_classes = """
+                    #     \nClass:     Cement content z [kg/m^3]
+                    #     \nI    :     60 <= z <= 100
+                    #     \nII   :     100 <= z <= 150
+                    #     \nIII  :     150 <= z <= 230
+                    #     \nIV   :     230 <= z <= 360
+                    #     \nV    :     360 <= z <= 520
+                    #     \nVI   :     520 <= z <= 600
+                    #     """
+                    #     structure.classification = cols[2].selectbox('BAUER MIP class (currently only for Class I)', MIP_classes, index=MIP_classes.index(structure.classification), help=info_MIP_classes, key='class_MIPSteelWall'+str(i))  # string
 
-                        structure.weight_steelprofile = cols[3].number_input('Weight of steel beams [ton]', value=structure.weight_steelprofile, step=1.0, help='According to input field in EFFC Carbon Calculator. Distance to steel supplier: 300 km (not variable)', key='weight_steelprofile_MIPSteelwall'+str(i))
-                        #structure.classification = MIP_classes.index(classification)# index
-                        # calc tCO2_eq
-                        sum_tco2_eq = structure.calc_co2eq()
-                        tab.markdown('### Results $tCO2eq$ for MIP wall as cut-off wall: {0:.1f}'.format(sum_tco2_eq))
+                    #     structure.weight_steelprofile = cols[3].number_input('Weight of steel beams [ton]', value=structure.weight_steelprofile, step=1.0, help='According to input field in EFFC Carbon Calculator. Distance to steel supplier: 300 km (not variable)', key='weight_steelprofile_MIPSteelwall'+str(i))
+                    #     #structure.classification = MIP_classes.index(classification)# index
+                    #     # calc tCO2_eq
+                    #     sum_tco2_eq = structure.calc_co2eq()
+                    #     tab.markdown('### Results $tCO2eq$ for MIP wall as cut-off wall: {0:.1f}'.format(sum_tco2_eq))
 
         with tabs[-1]: # All projects
             #st.header('$tCO2eq$ summary')
@@ -410,6 +409,7 @@ def continue_program(st, parameters):
                 st.header("Overview of the construction variant")
 
             cols = st.columns(len(parameters['projects']))
+
             if steelstructure:
                 replace_structures_from_projects(project_names_to_be_assigned, parameters['projects'], MIPSteelProfileWall(), index)
 
@@ -577,7 +577,8 @@ def replace_structures_from_projects(project_names_to_be_assigned, projects, str
     """
     for project in projects:
         if project.project_variant in project_names_to_be_assigned:
-            project.structures = project.structures[:index]+[structure_to_replace]+project.structures[index+1:]
+            project.structures[index] = structure_to_replace
+            # project.structures = project.structures[:index]+[structure_to_replace]+project.structures[index+1:]
 
 def remove_projects(projects_to_remove, parameters):
     """ Removes one or more selected projects
