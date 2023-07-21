@@ -243,7 +243,6 @@ def continue_program(st, parameters):
                         if st.checkbox('with steel structures'):
                             structure = MIPSteelProfileWall()
                             steelstructure = True
-                            index = parameters['projects'].structures.index(MIPWall)
                             tab.header('Details for MIP wall with steel profiles')
                             cols = tab.columns(3)
                             structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
@@ -411,7 +410,7 @@ def continue_program(st, parameters):
             cols = st.columns(len(parameters['projects']))
 
             if steelstructure:
-                replace_structures_from_projects(project_names_to_be_assigned, parameters['projects'], MIPSteelProfileWall(), index)
+                replace_structures_from_projects(project_names_to_be_assigned, parameters['projects'], structures_to_assign)
 
             for i, project in enumerate(parameters['projects']):
                 cols[i].markdown('### ' + project.project_variant)
@@ -552,16 +551,16 @@ def add_structures_to_projects(structures_to_assign, project_names_to_be_assigne
                     project.add_structure(Anchor())
                 elif structure == 'MIP wall':
                     project.add_structure(MIPWall())
+                    index = structures_to_assign.index(structure)
                 elif structure == 'MIP wall EPD':
                     project.add_structure(MIPWall_EPD())
-                elif structure == 'MIP wall with steel profiles':
-                    project.add_structure(MIPSteelProfileWall())
-                elif structure == 'MIP wall with steel profiles EPD':
-                    project.add_structure(MIPSteelProfileWall_EPD())
+                    index = structures_to_assign.index(structure)
                 elif structure == 'Pile/ Pile wall':
                     project.add_structure(PileWall())
                 elif structure == 'Diaphragm wall':
                     project.add_structure(DiaphragmWall())
+
+
 
 
 def remove_structures_from_projects(project_names_to_be_assigned, projects):
@@ -572,13 +571,18 @@ def remove_structures_from_projects(project_names_to_be_assigned, projects):
             while project.structures:   # remove structure until structures list is empty
                 project.structures.pop()
 
-def replace_structures_from_projects(project_names_to_be_assigned, projects, structure_to_replace, index):
+def replace_structures_from_projects(project_names_to_be_assigned, projects, structures_to_assign):
     """ Replaces structures from the selected project(s)
     """
     for project in projects:
         if project.project_variant in project_names_to_be_assigned:
-            project.structures[index] = structure_to_replace
-            # project.structures = project.structures[:index]+[structure_to_replace]+project.structures[index+1:]
+            for structure in structures_to_assign:
+                if structure == 'MIP wall':
+                    project.replace_structure(MIPSteelProfileWall())
+                elif structure == 'MIP wall EPD':
+                    project.replace_structure(MIPSteelProfileWall_EPD())
+                else:
+                    pass
 
 def remove_projects(projects_to_remove, parameters):
     """ Removes one or more selected projects
