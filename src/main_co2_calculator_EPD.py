@@ -348,8 +348,6 @@ def continue_program(st, parameters):
 
         if steelstructure:
             steel_check(project_names_to_be_assigned, parameters['projects'], structures_to_assign)
-        elif steelstructure == False:
-            steel_uncheck(project_names_to_be_assigned, parameters['projects'], structures_to_assign)
         
         with tabs[-1]: # All projects
             #st.header('$tCO2eq$ summary')
@@ -534,17 +532,18 @@ def steel_check(project_names_to_be_assigned, projects, structures_to_assign):
                     project.replace_structure(MIPWall_EPD(), MIPSteelProfileWall_EPD())
                 else:
                     pass
-def steel_uncheck(project_names_to_be_assigned, projects, structures_to_assign):
-    """ Replaces structures from the selected project(s)"""
-    for project in projects:
-        if project.project_variant in project_names_to_be_assigned:
-            for structure in structures_to_assign:
-                if structure == 'MIP wall':
-                    project.replace_structure(MIPSteelProfileWall(),MIPWall())
-                elif structure == 'MIP wall EPD':
-                    project.replace_structure(MIPSteelProfileWall_EPD(),MIPWall_EPD())
-                else:
-                    pass
+
+# def steel_uncheck(project_names_to_be_assigned, projects, structures_to_assign):
+#     """ Replaces structures from the selected project(s)"""
+#     for project in projects:
+#         if project.project_variant in project_names_to_be_assigned:
+#             for structure in structures_to_assign:
+#                 if structure == 'MIP wall':
+#                     project.replace_structure(MIPSteelProfileWall(),MIPWall())
+#                 elif structure == 'MIP wall EPD':
+#                     project.replace_structure(MIPSteelProfileWall_EPD(),MIPWall_EPD())
+#                 else:
+#                     pass
 
             
 
