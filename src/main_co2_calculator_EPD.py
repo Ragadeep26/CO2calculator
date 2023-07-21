@@ -120,6 +120,7 @@ def continue_program(st, parameters):
         add_structures_to_projects(structures_to_assign, project_names_to_be_assigned, parameters['projects'])
 
     # foundation structures for each project
+    steelstructure =  False #forMIP
     if parameters['projects']:
         project_names = [project.project_variant for project in parameters['projects']] + ['Summary']
         tabs = st.tabs(project_names)
@@ -410,7 +411,7 @@ def continue_program(st, parameters):
 
             cols = st.columns(len(parameters['projects']))
             if steelstructure:
-                replace_structures_from_projects(project_names_to_be_assigned,parameters['projects'], MIPSteelProfileWall(), index)
+                replace_structures_from_projects(project_names_to_be_assigned, parameters['projects'], MIPSteelProfileWall(), index)
 
             for i, project in enumerate(parameters['projects']):
                 cols[i].markdown('### ' + project.project_variant)
