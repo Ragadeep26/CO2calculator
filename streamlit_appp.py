@@ -1,12 +1,9 @@
 import sys
 import streamlit as st
 import numpy as np
-#import matplotlib as mpl
 from src.main_co2_calculator import main_CO2_calculator
 from src.main_co2_calculator_EPD import main_CO2_calculator_EPD
 st.set_page_config(page_title='Piles & panels', layout="wide", page_icon="⚙️")
-
-
 
 if __name__ == '__main__':
     # Sidebar
@@ -24,7 +21,6 @@ if __name__ == '__main__':
     else:
         pass
 
-
     # Version notes
     st.sidebar.header('Version and used packages')
     st.sidebar.write('CO2Calculator=bjg.05.2023')
@@ -38,3 +34,4 @@ if __name__ == '__main__':
     st.sidebar.header('Contact')
     st.sidebar.write('BST-GBT-BK\Ragadeep Bojja')
     st.sidebar.write('ragadeep.bojja@bauer.de')
+    

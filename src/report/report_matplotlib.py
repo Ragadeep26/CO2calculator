@@ -16,6 +16,8 @@ from src.co2_calculator.structures.wall_MIP_EPD import MIPWall_EPD
 from src.co2_calculator.structures.wall_MIP_steelprofile import MIPSteelProfileWall
 from src.co2_calculator.structures.wall_MIP_steelprofile_EPD import MIPSteelProfileWall_EPD
 
+
+
 class Report(FigureCanvas):
     """ This class uses matplotlib for creating A4 pdf report
     """
