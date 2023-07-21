@@ -419,14 +419,14 @@ def continue_program(st, parameters):
                     elif isinstance(structure, DiaphragmWall):
                         cols[i].write('Diaphragm wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
                     elif isinstance(structure, MIPWall):
-                        if steelstructure == True:
+                        if steelstructure:
                             structure = MIPSteelProfileWall()
                             structure_tco2_eq = structure.calc_co2eq()
                             cols[i].write('MIP wall with steel profiles $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
                         else:
                             cols[i].write('MIP as cut-off wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))    
                     elif isinstance(structure, MIPWall_EPD):
-                        if steelstructure == True:
+                        if steelstructure:
                             structure = MIPSteelProfileWall_EPD()
                             structure_tco2_eq = structure.calc_co2eq()
                             cols[i].write('MIP wall with steel profiles according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
@@ -443,8 +443,11 @@ def continue_program(st, parameters):
             is_epd = False      # check if CO2_eq of any structure is calculated according to EPD
             for project in parameters['projects']:
                 for structure in project.structures:
-                    if isinstance(structure, MIPWall_EPD) or isinstance(structure, MIPSteelProfileWall_EPD):
+                    if isinstance(structure, MIPWall_EPD):
                         is_epd = True
+                        break
+                    if steelstructure == True:
+                        is_steel = True
                         break
             if is_epd:
                 if len(parameters['projects']) > 1:
@@ -453,6 +456,14 @@ def continue_program(st, parameters):
                     st.header("$tCO2eq$ for the construction variant")
                 _, axis_cats, df_cats = create_tCO2eq_barchart_epd_matplotlib(parameters['projects'])
                 st.pyplot(axis_cats.figure, use_container_width=False)
+
+            if is_steel:
+                if isinstance(structure, MIPWall_EPD):
+                    structure = MIPSteelProfileWall_EPD()
+                elif isinstance(structure, MIPWall):
+                    structure = MIPSteelProfileWall()
+                else:
+                    pass
 
             else:
                 if len(parameters['projects']) > 1:
