@@ -242,10 +242,7 @@ def continue_program(st, parameters):
                         if st.checkbox('with steel structures'):
                             structure = MIPSteelProfileWall()
                             steelstructure = True
-                            # newproject = Project.replace_structure(structure)
-                            # parameters['projects'] = parameters['projects'][:i]+[newproject]+parameters['projects'][i+1:]
-                            replace_structures_from_projects(project_names_to_be_assigned, parameters['projects'], structure, i)
-                            #st.write(structure)
+                            index  = i
                             tab.header('Details for MIP wall with steel profiles')
                             cols = tab.columns(3)
                             structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
@@ -412,6 +409,9 @@ def continue_program(st, parameters):
                 st.header("Overview of the construction variant")
 
             cols = st.columns(len(parameters['projects']))
+            if steelstructure:
+                replace_structures_from_projects(project_names_to_be_assigned,parameters['projects'], MIPSteelProfileWall(), index)
+
             for i, project in enumerate(parameters['projects']):
                 cols[i].markdown('### ' + project.project_variant)
                 for structure in project.structures:
@@ -424,15 +424,11 @@ def continue_program(st, parameters):
                         cols[i].write('Diaphragm wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
                     elif isinstance(structure, MIPWall):
                         if steelstructure:
-                            structure = MIPSteelProfileWall()
-                            structure_tco2_eq = structure.calc_co2eq()
                             cols[i].write('MIP wall with steel profiles $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
                         else:
                             cols[i].write('MIP as cut-off wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))    
                     elif isinstance(structure, MIPWall_EPD):
                         if steelstructure:
-                            structure = MIPSteelProfileWall_EPD()
-                            structure_tco2_eq = structure.calc_co2eq()
                             cols[i].write('MIP wall with steel profiles according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
                         else:
                             cols[i].write('MIP as cut-off wall according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
@@ -456,6 +452,8 @@ def continue_program(st, parameters):
                     st.header('$tCO2eq$ for all construction variants')
                 else:
                     st.header("$tCO2eq$ for the construction variant")
+                    if steelstructure:
+                        replace_structures_from_projects(project_names_to_be_assigned,parameters['projects'], MIPSteelProfileWall(), index)
                 _, axis_cats, df_cats = create_tCO2eq_barchart_epd_matplotlib(parameters['projects'])
                 st.pyplot(axis_cats.figure, use_container_width=False)
 
@@ -473,13 +471,9 @@ def continue_program(st, parameters):
                 for i, (key, value) in enumerate(categrogy.items()):
                     cols[i%4].write('{0}: {1}'.format(key, value))
 
-                #_, axis_projs, df_prjs = create_tCO2eq_barchart_all_projects_matplotlib(parameters['projects'])
-                # if steelstructure:
-                #     # projectsteel = Project('MIPwithsteelstructure', ['MIPwithsteelstructure'])
-                #     # projectsteel.add_structure(MIPSteelProfileWall())
-                #     # parameters['projectsteel'].append(projectsteel)
-                #     _, axis_cats, df_cats = create_tCO2eq_barchart_all_categories_matplotlib(parameters['projectsteel'])
-                # else:
+                if steelstructure:
+                    replace_structures_from_projects(project_names_to_be_assigned,parameters['projects'], MIPSteelProfileWall(), index)
+
                 _, axis_cats, df_cats = create_tCO2eq_barchart_all_categories_matplotlib(parameters['projects'])
                 #col1.pyplot(axis_projs.figure, use_container_width=False)
                 st.pyplot(axis_cats.figure, use_container_width=False)
