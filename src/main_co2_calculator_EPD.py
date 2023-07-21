@@ -244,8 +244,7 @@ def continue_program(st, parameters):
                             steelstructure = True
                             #newproject = Project.replace_structure(structure)
                             # newparamsindex = parameters['projects'].index('MIPWall')
-                            parameters['projects'] = parameters['projects'][:i]+[Project('MIPWall',[structure])]+parameters['projects'][i+1:]
-
+                            parameters['projects'] = parameters['projects'][:i]+[Project.replace_structure(structure)]+parameters['projects'][i+1:]
                             #st.write(structure)
                             tab.header('Details for MIP wall with steel profiles')
                             cols = tab.columns(3)
@@ -306,6 +305,7 @@ def continue_program(st, parameters):
                         if st.checkbox('With Steel structures EPD'):
                             structure = MIPSteelProfileWall_EPD()
                             steelstructure = True
+                            parameters['projects'] = parameters['projects'][:i]+[Project('MIPWall_EPD',[structure])]+parameters['projects'][i+1:]
                             tab.header('Details for MIP wall with steel profiles according to EPD')
                             cols = tab.columns(4)
                             structure.wall_area = cols[0].number_input('Wall area [m^2]', value=structure.wall_area, step=100.0, help='Area of the constructed wall', key='wall_area_MIPSteelwall'+str(i))
