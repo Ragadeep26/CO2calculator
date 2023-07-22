@@ -127,12 +127,8 @@ def continue_program(st, parameters):
         # foundation structures for each of the projects
         for i, tab in enumerate(tabs[:-1]):
             with tab:
-                #tab.write('all projects: {}'.format(parameters['projects']))
-                #tab.write('this project: {}'.format(parameters['projects'][i]))
-                #tab.write("this project's structures: {}".format(parameters['projects'][i].structures))
 
                 for structure in parameters['projects'][i].structures:
-
                     if isinstance(structure, Anchor):
                         tab.header('Details for anchors')
                         cols = tab.columns(3)
@@ -161,7 +157,6 @@ def continue_program(st, parameters):
                         #tab.write(df)
                         axis = create_tCO2eq_piechart_matplotlib(structure)
                         col2.pyplot(axis.figure, use_container_width=False)
-
 
                     if isinstance(structure, PileWall):
                         tab.header('Details for piles/ pile wall')
@@ -270,6 +265,7 @@ def continue_program(st, parameters):
                             axis = create_tCO2eq_piechart_matplotlib(structure)
                             col2.pyplot(axis.figure, use_container_width=False)
                             #remove_structures_from_projects(project_names_to_be_assigned, parameters['projects'])
+
                         else:
                             steelstructure = False
                             tab.header('Details for MIP as cut-off wall')
@@ -346,95 +342,76 @@ def continue_program(st, parameters):
                             sum_tco2_eq = structure.calc_co2eq()
                             tab.markdown('### Results $tCO2eq$ for MIP wall as cut-off wall: {0:.1f}'.format(sum_tco2_eq))
 
-        if steelstructure:
-            steel_check(project_names_to_be_assigned, parameters['projects'], structures_to_assign)
-        
-        with tabs[-1]: # All projects
-            #st.header('$tCO2eq$ summary')
-            #st.markdown('### $tCO2eq$ total')
-            #c = create_tCO2eq_barchart_all_projects(parameters['projects'])
-            #st.altair_chart(c, use_container_width=False)
+        should_create_summary_button = st.button('create summary',key = 'create summary')  
+        if should_create_summary_button and parameters['projects']:   
+            with tabs[-1]: # All projects
 
-            if len(parameters['projects']) > 1:
-                st.header('Overview of all construction variants')
-            else:
-                st.header("Overview of the construction variant")
-
-            cols = st.columns(len(parameters['projects']))
-
-
-            for i, project in enumerate(parameters['projects']):
-                cols[i].markdown('### ' + project.project_variant)
-                for structure in project.structures:
-                    structure_tco2_eq = structure.calc_co2eq()
-                    if isinstance(structure, Anchor):
-                        cols[i].write('Ground anchors $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
-                    if isinstance(structure, PileWall):
-                        cols[i].write('Piles/ pile wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
-                    elif isinstance(structure, DiaphragmWall):
-                        cols[i].write('Diaphragm wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
-                    elif isinstance(structure, MIPWall):
-                        if steelstructure:
-                            cols[i].write('MIP wall with steel profiles $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
-                        else:
-                            cols[i].write('MIP as cut-off wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))    
-                    elif isinstance(structure, MIPWall_EPD):
-                        if steelstructure:
-                            cols[i].write('MIP wall with steel profiles according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
-                        else:
-                            cols[i].write('MIP as cut-off wall according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
-
-                    # elif isinstance(structure, MIPSteelProfileWall):
-                    #     cols[i].write('MIP wall with steel profiles $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
-                    # elif isinstance(structure, MIPSteelProfileWall_EPD):
-                    #     cols[i].write('MIP wall with steel profiles according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
-
-            #try:
-            #col1, col2 = st.columns(2)
-            is_epd = False      # check if CO2_eq of any structure is calculated according to EPD
-            for project in parameters['projects']:
-                for structure in project.structures:
-                    if isinstance(structure, MIPWall_EPD):
-                        is_epd = True
-                        break
-
-            if is_epd:
                 if len(parameters['projects']) > 1:
-                    st.header('$tCO2eq$ for all construction variants')
+                    st.header('Overview of all construction variants')
                 else:
-                    st.header("$tCO2eq$ for the construction variant")
-                    # if steelstructure:
-                    #     replace_structures_from_projects(project_names_to_be_assigned,parameters['projects'], MIPSteelProfileWall(), index)
-                _, axis_cats, df_cats = create_tCO2eq_barchart_epd_matplotlib(parameters['projects'])
-                st.pyplot(axis_cats.figure, use_container_width=False)
+                    st.header("Overview of the construction variant")
 
-                        
+                cols = st.columns(len(parameters['projects']))
 
-            else:
-                if len(parameters['projects']) > 1:
-                    st.header('$tCO2eq$ breakdown for all construction variants')
+
+                for i, project in enumerate(parameters['projects']):
+                    cols[i].markdown('### ' + project.project_variant)
+                    for structure in project.structures:
+                        structure_tco2_eq = structure.calc_co2eq()
+                        if isinstance(structure, Anchor):
+                            cols[i].write('Ground anchors $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+                        if isinstance(structure, PileWall):
+                            cols[i].write('Piles/ pile wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+                        elif isinstance(structure, DiaphragmWall):
+                            cols[i].write('Diaphragm wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+                        elif isinstance(structure, MIPWall):
+                            if steelstructure:
+                                structure = MIPSteelProfileWall()
+                                structure_tco2_eq = structure.calc_co2eq()
+                                cols[i].write('MIP wall with steel profiles $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+                            else:
+                                cols[i].write('MIP as cut-off wall $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))    
+                        elif isinstance(structure, MIPWall_EPD):
+                            if steelstructure:
+                                structure = MIPSteelProfileWall_EPD()
+                                structure_tco2_eq = structure.calc_co2eq()
+                                cols[i].write('MIP wall with steel profiles according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+                            else:
+                                cols[i].write('MIP as cut-off wall according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
+
+
+
+                is_epd = False      # check if CO2_eq of any structure is calculated according to EPD
+                for project in parameters['projects']:
+                    for structure in project.structures:
+                        if isinstance(structure, MIPWall_EPD):
+                            is_epd = True
+                            break
+
+                if is_epd:
+                    if len(parameters['projects']) > 1:
+                        st.header('$tCO2eq$ for all construction variants')
+                    else:
+                        st.header("$tCO2eq$ for the construction variant")
+                    _, axis_cats, df_cats = create_tCO2eq_barchart_epd_matplotlib(parameters['projects'])
+                    st.pyplot(axis_cats.figure, use_container_width=False)
+
+
                 else:
-                    st.header("$tCO2eq$ breakdown")
-                #st.markdown('### $tCO2eq$ summary')
-                categrogy = {'MP': 'Material production', 'MT':'Material transport', 'DT': 'Disposal transport', 'EQ': 'Equipment', 'EE': 'Energy/ electricity/ hour', 
-                            'MD': 'Mobilization/ demobilization', 'PT': 'Persons transport'}
-                cols = st.columns(4)
-                for i, (key, value) in enumerate(categrogy.items()):
-                    cols[i%4].write('{0}: {1}'.format(key, value))
+                    if len(parameters['projects']) > 1:
+                        st.header('$tCO2eq$ breakdown for all construction variants')
+                    else:
+                        st.header("$tCO2eq$ breakdown")
+                    #st.markdown('### $tCO2eq$ summary')
+                    categrogy = {'MP': 'Material production', 'MT':'Material transport', 'DT': 'Disposal transport', 'EQ': 'Equipment', 'EE': 'Energy/ electricity/ hour', 
+                                'MD': 'Mobilization/ demobilization', 'PT': 'Persons transport'}
+                    cols = st.columns(4)
+                    for i, (key, value) in enumerate(categrogy.items()):
+                        cols[i%4].write('{0}: {1}'.format(key, value))
+                    _, axis_cats, df_cats = create_tCO2eq_barchart_all_categories_matplotlib(parameters['projects'])
+                    st.pyplot(axis_cats.figure, use_container_width=False)
 
-                # if steelstructure:
-                #     replace_structures_from_projects(project_names_to_be_assigned,parameters['projects'], MIPSteelProfileWall(), index)
-
-                _, axis_cats, df_cats = create_tCO2eq_barchart_all_categories_matplotlib(parameters['projects'])
-                #col1.pyplot(axis_projs.figure, use_container_width=False)
-                st.pyplot(axis_cats.figure, use_container_width=False)
-
-            #except: # exception when a project has no structures assigned to it
-            #    pass
-
-
-            #st.bar_chart(df)
-            
+         
     # Download project data to pickle file
     if parameters['projects']:
         st.subheader('Save session state')
@@ -511,7 +488,6 @@ def add_structures_to_projects(structures_to_assign, project_names_to_be_assigne
 
 
 
-
 def remove_structures_from_projects(project_names_to_be_assigned, projects):
     """ Removes all structures from the selected project(s)
     """
@@ -520,32 +496,7 @@ def remove_structures_from_projects(project_names_to_be_assigned, projects):
             while project.structures:   # remove structure until structures list is empty
                 project.structures.pop()
 
-def steel_check(project_names_to_be_assigned, projects, structures_to_assign):
-    """ Replaces structures from the selected project(s)
-    """
-    for project in projects:
-        if project.project_variant in project_names_to_be_assigned:
-            for structure in structures_to_assign:
-                if structure == 'MIP wall':
-                    project.replace_structure(MIPWall(), MIPSteelProfileWall())
-                elif structure == 'MIP wall EPD':
-                    project.replace_structure(MIPWall_EPD(), MIPSteelProfileWall_EPD())
-                else:
-                    pass
 
-# def steel_uncheck(project_names_to_be_assigned, projects, structures_to_assign):
-#     """ Replaces structures from the selected project(s)"""
-#     for project in projects:
-#         if project.project_variant in project_names_to_be_assigned:
-#             for structure in structures_to_assign:
-#                 if structure == 'MIP wall':
-#                     project.replace_structure(MIPSteelProfileWall(),MIPWall())
-#                 elif structure == 'MIP wall EPD':
-#                     project.replace_structure(MIPSteelProfileWall_EPD(),MIPWall_EPD())
-#                 else:
-#                     pass
-
-            
 
 def remove_projects(projects_to_remove, parameters):
     """ Removes one or more selected projects
@@ -566,8 +517,3 @@ def is_unique_names(names):
     else:
         return True
 
-
-#def assign_structure_attributes(structure, **kwargs):
-#    """ Assign structure attributes
-#    """
-#    structure.__dict__.update(kwargs)
