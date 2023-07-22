@@ -59,7 +59,6 @@ def check_password(st):
 
 def continue_program(st, parameters):
     """ Runs the main program"""
-
     col1, col2 = st.columns((0.5, 0.5))
     col1.subheader('Load projects data (optional)')
     uploaded_file = col1.file_uploader('Select session state file to load (.pickle)', type='pickle', key='fileuploader_CO22_calculator')  # pickle file must have the suffix .pickle
@@ -127,7 +126,6 @@ def continue_program(st, parameters):
         # foundation structures for each of the projects
         for i, tab in enumerate(tabs[:-1]):
             with tab:
-
                 for structure in parameters['projects'][i].structures:
                     if isinstance(structure, Anchor):
                         tab.header('Details for anchors')
@@ -293,7 +291,7 @@ def continue_program(st, parameters):
                             col1.write('Mobilization/ demobilization [tCO2_eq]: {0:.1f}'.format(structure.out_mob_demob))
                             col1.write('Persons transport [tCO2_eq]: {0:.1f}'.format(structure.out_persons_transport))
                             axis = create_tCO2eq_piechart_matplotlib(structure)
-                        col2.pyplot(axis.figure, use_container_width=False)
+                            col2.pyplot(axis.figure, use_container_width=False)
 
                     elif isinstance(structure, MIPWall_EPD):
                         if st.checkbox('With Steel structures EPD'):
@@ -352,8 +350,6 @@ def continue_program(st, parameters):
                     st.header("Overview of the construction variant")
 
                 cols = st.columns(len(parameters['projects']))
-
-
                 for i, project in enumerate(parameters['projects']):
                     cols[i].markdown('### ' + project.project_variant)
                     for structure in project.structures:
@@ -379,8 +375,6 @@ def continue_program(st, parameters):
                             else:
                                 cols[i].write('MIP as cut-off wall according to EPD $tCO2eq$: {0:.1f}'.format(structure_tco2_eq))
 
-
-
                 is_epd = False      # check if CO2_eq of any structure is calculated according to EPD
                 for project in parameters['projects']:
                     for structure in project.structures:
@@ -396,7 +390,6 @@ def continue_program(st, parameters):
                     _, axis_cats, df_cats = create_tCO2eq_barchart_epd_matplotlib(parameters['projects'])
                     st.pyplot(axis_cats.figure, use_container_width=False)
 
-
                 else:
                     if len(parameters['projects']) > 1:
                         st.header('$tCO2eq$ breakdown for all construction variants')
@@ -411,7 +404,6 @@ def continue_program(st, parameters):
                     _, axis_cats, df_cats = create_tCO2eq_barchart_all_categories_matplotlib(parameters['projects'])
                     st.pyplot(axis_cats.figure, use_container_width=False)
 
-         
     # Download project data to pickle file
     if parameters['projects']:
         st.subheader('Save session state')
@@ -421,7 +413,6 @@ def continue_program(st, parameters):
         st.download_button("Save calculations to file", data=data_to_dump, file_name=download_filename)
     
     # PDF report
-    #checkbox = st.checkbox('Download report in PDF', value=False)
     should_print_report_botton =  st.button('Create report in PDF', key='create_pdf_report')
     if should_print_report_botton and parameters['projects']:
         pdf_fn = 'Report_CO2_Evaluator' + parameters['project_id'] + '.pdf'
@@ -516,4 +507,3 @@ def is_unique_names(names):
         return False
     else:
         return True
-
