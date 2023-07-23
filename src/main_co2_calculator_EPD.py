@@ -404,7 +404,7 @@ def continue_program(st, parameters):
                             st.pyplot(axis.figure, use_container_width=False)
                     else:
                         _, axis_cats, df_cats = create_tCO2eq_barchart_all_categories_matplotlib(parameters['projects'])
-                    st.pyplot(axis_cats.figure, use_container_width=False)
+                        st.pyplot(axis_cats.figure, use_container_width=False)
 
     # Download project data to pickle file
     if parameters['projects']:
