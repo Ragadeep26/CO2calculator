@@ -312,10 +312,7 @@ def continue_program(st, parameters):
                             \nVI   :     520 <= z <= 600
                             """
                             structure.classification = cols[2].selectbox('BAUER MIP class (currently only for Class I)', MIP_classes, index=MIP_classes.index(structure.classification), help=info_MIP_classes, key='class_MIPSteelWall'+str(i))  # string
-
                             structure.weight_steelprofile = cols[3].number_input('Weight of steel beams [ton]', value=structure.weight_steelprofile, step=1.0, help='According to input field in EFFC Carbon Calculator. Distance to steel supplier: 300 km (not variable)', key='weight_steelprofile_MIPSteelwall'+str(i))
-                            #structure.classification = MIP_classes.index(classification)# index
-                            # calc tCO2_eq
                             sum_tco2_eq = structure.calc_co2eq()
                             tab.markdown('### Results $tCO2eq$ for MIP wall as cut-off wall: {0:.1f}'.format(sum_tco2_eq))
                         else:
@@ -395,13 +392,18 @@ def continue_program(st, parameters):
                         st.header('$tCO2eq$ breakdown for all construction variants')
                     else:
                         st.header("$tCO2eq$ breakdown")
-                    #st.markdown('### $tCO2eq$ summary')
+
                     categrogy = {'MP': 'Material production', 'MT':'Material transport', 'DT': 'Disposal transport', 'EQ': 'Equipment', 'EE': 'Energy/ electricity/ hour', 
                                 'MD': 'Mobilization/ demobilization', 'PT': 'Persons transport'}
                     cols = st.columns(4)
                     for i, (key, value) in enumerate(categrogy.items()):
                         cols[i%4].write('{0}: {1}'.format(key, value))
-                    _, axis_cats, df_cats = create_tCO2eq_barchart_all_categories_matplotlib(parameters['projects'])
+
+                    if steelstructure:
+                            axis = create_tCO2eq_piechart_matplotlib(structure)
+                            cols.pyplot(axis.figure, use_container_width=False)
+                    else:
+                        _, axis_cats, df_cats = create_tCO2eq_barchart_all_categories_matplotlib(parameters['projects'])
                     st.pyplot(axis_cats.figure, use_container_width=False)
 
     # Download project data to pickle file
@@ -478,7 +480,6 @@ def add_structures_to_projects(structures_to_assign, project_names_to_be_assigne
                     project.add_structure(DiaphragmWall())
 
 
-
 def remove_structures_from_projects(project_names_to_be_assigned, projects):
     """ Removes all structures from the selected project(s)
     """
@@ -486,7 +487,6 @@ def remove_structures_from_projects(project_names_to_be_assigned, projects):
         if project.project_variant in project_names_to_be_assigned:
             while project.structures:   # remove structure until structures list is empty
                 project.structures.pop()
-
 
 
 def remove_projects(projects_to_remove, parameters):
@@ -498,7 +498,6 @@ def remove_projects(projects_to_remove, parameters):
                 parameters['projects'].pop(i)
 
     #print(parameters['projects'])
-
 
 def is_unique_names(names):
     """ Check if names are unique
