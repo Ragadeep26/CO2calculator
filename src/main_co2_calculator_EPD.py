@@ -233,7 +233,7 @@ def continue_program(st, parameters):
                         col2.pyplot(axis.figure, use_container_width=False)
 
                     elif isinstance(structure, MIPWall):
-                        if st.checkbox('with steel structures'):
+                        if st.button('with steel structures'):
                             structure = MIPSteelProfileWall()
                             steelstructure = True
                             tab.header('Details for MIP wall with steel profiles')
@@ -294,7 +294,7 @@ def continue_program(st, parameters):
                             col2.pyplot(axis.figure, use_container_width=False)
 
                     elif isinstance(structure, MIPWall_EPD):
-                        if st.checkbox('With Steel structures EPD'):
+                        if st.button('With Steel structures EPD'):
                             structure = MIPSteelProfileWall_EPD()
                             steelstructure = True
                             tab.header('Details for MIP wall with steel profiles according to EPD')
